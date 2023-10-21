@@ -1,0 +1,303 @@
+---
+title: "Guide to UMAP"
+author: |
+  | Greg Forkutza
+  | Student ID: 400277514
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  bookdown::pdf_document2:
+    default: true
+    citation_package: natbib
+    latex_engine: xelatex
+    toc: true 
+    toc_depth: 2  
+    extra_dependencies:
+      - tikz
+      - tikz-cd
+fontsize: 8pt
+linestretch: 1.5
+geometry: margin=1in
+urlcolor: blue
+bibliography: a2.bib
+header-includes:
+  - "\\usepackage[nottoc]{tocbibind}"
+  - "\\newcommand{\\lemmastyle}[1]{\\textit{#1}}"
+  - "\\usepackage{tikz}"
+  - "\\usetikzlibrary{arrows,shapes,positioning,calc}"
+---
+
+```{r, echo = FALSE}
+library(rgl)
+```
+
+\newpage
+
+# Theoretical Foundations for UMAP
+
+## Uniform Distribution of data on manifold and geodesic approximation
+
+
+\begin{lemma}
+Let $(M, g)$ be a Riemannian manifold in an ambient $\mathbb{R}^n$, and let $p \in M$ be a point. If $g$ is locally constant about $p$ in an open neighbourhood $U$ such that $g$ is a constant diagonal matrix in ambient coordinates, then in a ball $B \subseteq U$ centered at $p$ with volume $\frac{\pi^{n/2}}{\Gamma(n/2 + 1)}$ with respect to $g$, the geodesic distance from $p$ to any point $q \in B$ is $\frac{1}{r} d_{\mathbb{R}^n}(p, q)$, where $r$ is the radius of the ball in the ambient space and $d_{\mathbb{R}^n}$ is the existing metric on the ambient space.
+\end{lemma}
+
+
+
+Let's break down the statement:
+
+> \lemmastyle{If \( g \) is locally constant about \( p \) in an open neighbourhood \( U \)}
+
+This means that the metric \( g \) doesn't change when you move slightly away from the point \( p \) within some open neighborhood \( U \). Think of it like a function that has the same value everywhere within a small region around \( p \).
+
+> \lemmastyle{such that \( g \) is a constant diagonal matrix in ambient coordinates}
+
+First, a diagonal matrix is a matrix where all the off-diagonal entries are zero. The values on the diagonal can be non-zero. For example, in 3 dimensions:
+
+\[ 
+\begin{matrix}
+a & 0 & 0 \\
+0 & b & 0 \\
+0 & 0 & c \\
+\end{matrix}
+\]
+
+Where \( a \), \( b \), and \( c \) are the diagonal entries. 
+
+When they say \( g \) is a constant diagonal matrix in ambient coordinates, it means when you express the metric \( g \) in the coordinates of the larger space \( \mathbb{R}^n \) (which they're calling "ambient coordinates"), it looks like a diagonal matrix with constant entries. 
+
+Near the point \( p \) on the manifold \( M \), the metric \( g \) behaves very simply. It doesn't vary (is locally constant), and in the "external" or ambient coordinates of \( \mathbb{R}^n \), it looks like a diagonal matrix with fixed, constant values. This implies a particular type of flatness or simplicity in how distances are measured near the point \( p \) on the manifold, at least within the open set \( U \).
+
+Now lets examine the matrix representation of a Riemannian metric and its implications.
+
+A Riemannian metric \( g \) at a point \( p \) on a manifold \( M \) can be thought of as a symmetric bilinear form on the tangent space \( T_pM \) at that point.
+
+**1. Symmetric Bilinear Form**:
+A bilinear form on a vector space \(V\) is a function \( B: V \times V \rightarrow \mathbb{R} \) that's linear in each argument. When \( B(u, v) = B(v, u) \) for all \( u, v \in V \), it's symmetric. For instance, the dot product on \( \mathbb{R}^2 \) is such a form: \( u \cdot v = u_1 v_1 + u_2 v_2 \) for vectors \( u = (u_1, u_2) \) and \( v = (v_1, v_2) \).
+
+**2. Local Coordinates on a Manifold**:
+Manifolds, by their nature, are abstract spaces that might not have an intrinsic notion of coordinates. However, in practice, to carry out calculations and to better understand their structure, we use local coordinate systems. Around any point \( p \) on a manifold \( M \), we can find a neighborhood in which we can assign a set of coordinates \( (x^1, x^2, ..., x^n) \), where \( n \) is the dimension of the manifold. Such coordinates provide a way to quantify positions and directions locally on the manifold, analogous to how we use Cartesian coordinates in Euclidean spaces.
+
+
+**2. Differential Forms**:
+Differential forms are tools that generalize concepts from calculus to manifold settings. In calculus, you've encountered objects like \( dx \) and \( dy \), which denote infinitesimal changes. These are 1-forms, foundational building blocks for differential forms of higher degree. On \( \mathbb{R}^2 \), a general 1-form might look like \( f(x, y)dx + g(x, y)dy \), where \( f \) and \( g \) are functions and \( dx, dy \) are the coordinate 1-forms.
+
+**3. Bilinear Form on Tangent Space as a Differential Form**:
+Bilinear forms on the tangent space give a method for combining tangent vectors to produce scalars. Differential 2-forms do something similar, but with added structure (like antisymmetry). The metric \( g \), being a symmetric bilinear form, can be represented as a differential 2-form, which is captured by the expression \( g = g_{ij} dx^i \otimes dx^j \). This form tells us to measure the metric's impact on vectors by looking at their components in coordinate directions.
+
+**4. Local Coordinates & Differential Forms**:
+Local coordinates enable abstract geometric ideas to be translated into more concrete, computational terms. The differential 1-forms \( dx^i \) grasp the essence of infinitesimal changes in the coordinate directions. The components \( g_{ij} \) of the Riemannian metric in these coordinates effectively express the metric's values when applied to the coordinate vectors.If we have a local coordinate system \( (x^1, x^2, ..., x^n) \) around \( p \), the metric \( g \) can be expressed in terms of its components \( g_{ij} \) as:
+\[ g = g_{ij} dx^i \otimes dx^j \]
+
+This bilinear form can be represented as an \( n \times n \) symmetric matrix, where \( n \) is the dimension of the manifold \( M \). 
+
+**5. Matrix Representation**:
+The metric can be thought of as a matrix filled with scalar values that give the lengths and angles between tangent vectors at a point. When we're dealing with computations, this matrix form is invaluable. Specifically, at a point \( p \), the matrix elements are given by \( g_{ij} \). Therefore, at a point \( p \) with coordinates \( (x^1_p, x^2_p, ..., x^n_p) \), the matrix representation of the metric, \( [g_{ij}(p)] \), has its individual elements as \( g_{ij}(p) \) for every \( i, j \).
+
+**6. What does it say about the local geometry if \( g \) is flat?**
+
+   If the metric is flat, it means that locally, around any point, there's a coordinate system in which the metric looks like the standard Euclidean metric. In terms of the matrix representation, in these "flat" coordinates, the metric matrix would be the identity matrix (or a diagonal matrix with constant entries if the metric has been scaled).
+
+   Specifically, a flat metric implies:
+
+   - **Zero curvature:** The Riemann curvature tensor, which encodes how much the geometry of the manifold deviates from Euclidean space, vanishes everywhere. This means geodesic triangles in the manifold behave like triangles in flat space.
+   
+   - **Existence of isometric embeddings:** A flat Riemannian manifold can be isometrically embedded in some Euclidean space. This means that there's a way to "place" or "realize" the manifold inside a Euclidean space such that distances within the manifold match the usual Euclidean distances in that ambient space.
+
+   - **Global implications:** In the special case where the manifold is also simply-connected, flatness ensures that the manifold is globally isometric to \( \mathbb{R}^n \).
+
+   - **Geodesics are straight lines:** In a flat coordinate system, geodesics are straight lines. This means that if you were to "walk" along the manifold following a geodesic path, it would feel like walking in a straight line in usual flat space.
+
+Putting it all together, if \( g \) is a constant matrix (especially a diagonal one), it's an indicator that the metric is flat (at least in the neighborhood where it's constant). This would make computations of geodesics, curvature, and other geometric quantities much simpler in that region. 
+
+## Fuzzy Topological Representations 
+
+\begin{definition}
+The category $\Delta$ has as objects the finite order sets $[n] = \{1,\dots,n\}$ with morphisms given by (non-strictly) order preserving maps.
+\end{definition}
+
+Using the category \( \Delta \) as a foundation, you can abstractly construct simplices. In the simplicial context, the objects of \( \Delta \) provide a way to define simplices, and the morphisms give a structure to how these simplices can be combined or subdivided.
+
+
+Lets examine in some more detail the category \( \Delta \).
+
+1. **Objects**: The objects of \( \Delta \) are finite ordered sets of the form \([n] = \{1, 2, \dots, n\}\). Each object \([n]\) can be visualized as a collection of \(n\) points, arranged in a linear, ordered fashion.
+
+2. **Morphisms**: The morphisms (or arrows) between these objects are (non-strictly) order-preserving maps. 
+
+   What does "non-strictly order-preserving" mean? 
+   
+   Suppose \(f: [m] \to [n]\) is a morphism in \( \Delta \). Then for any two elements \( i, j \in [m] \) such that \(i \leq j\), their images under \(f\) satisfy \(f(i) \leq f(j)\). The "non-strictly" part means that it's allowed for \(f(i) = f(j)\) even if \(i \neq j\), i.e., different elements from the domain can be mapped to the same element in the codomain, as long as the order is preserved.
+
+3. **Examples of morphisms**:
+
+   - The identity morphism on \([n]\) is the identity function, which maps each element to itself.
+   
+   - A morphism \(f: [2] \to [3]\) could be \(f(1) = 1, f(2) = 3\). This map preserves order because 1 is less than 2 in \([2]\), and their images 1 and 3 also respect that order in \([3]\).
+   
+   - Another morphism \(g: [3] \to [2]\) might be \(g(1) = 1, g(2) = 1, g(3) = 2\). This is a non-injective map that squashes some elements together, but it's still order-preserving.
+
+4. **Intuition**: Simplicial sets are a combinatorial tool used to study topological spaces. The category \( \Delta \) provides the "shape" of the simplices that constitute a simplicial set. Each object \([n]\) can be thought of as corresponding to an \(n\)-simplex, and the morphisms provide ways to map between these simplices in a manner that respects their structure.In a more abstract sense, the category \( \Delta \) is capturing the essence of how things can be ordered and how different ordered sets can relate to one another through maps that respect that ordering.
+
+Now we can use this abstraction to construct realizations of simplices:
+
+1. **Vertices of a Simplex**: The object \([n]\) in \( \Delta \) corresponds to an \(n\)-simplex. The set \([n] = \{1, 2, \dots, n\}\) provides the vertices of the simplex. So, \([0]\) corresponds to a 0-simplex (a point), \([1]\) to a 1-simplex (a line segment), \([2]\) to a 2-simplex (a triangle), and so on.
+
+2. **Face Maps**: The morphisms in \( \Delta \) give a way to define face maps, which are essential in constructing the boundary of a simplex. Specifically, the non-strictly order-preserving maps that skip one value represent the various face maps. For example:
+
+   - Consider the 2-simplex corresponding to \([2]\). If you have the map \(d_0: [2] \to [1]\) defined by \(d_0(1) = 1\) and \(d_0(2) = 2\), this essentially "skips" the 0th vertex and provides a map to the 1-simplex given by the edge opposite the 0th vertex of the triangle.
+   
+   - Similarly, \(d_1: [2] \to [1]\) might skip the 1st vertex, mapping both 1 and 2 to 2. This gives the edge opposite the 1st vertex.
+
+   - And \(d_2: [2] \to [1]\) could skip the 2nd vertex, mapping both 1 and 2 to 1, providing the edge opposite the 2nd vertex.
+
+3. **Constructing a Simplicial Complex**: A simplicial complex is a collection of simplices that are glued together along faces. Using the category \( \Delta \), you can think of a simplicial complex as a collection of objects (the simplices, given by sets \([n]\) for various \(n\)) along with a compatible set of morphisms (the face maps and other order-preserving maps) that tell you how the simplices are combined.
+
+4. **Realization**: 
+    While the abstract combinatorial structure provided by \( \Delta \) gives the shape and relationships between simplices, often you want to embed or "realize" these simplices in some Euclidean space \( \mathbb{R}^n \). This realization assigns actual geometric coordinates to the vertices of the simplices and linearly interpolates between them to fill out the simplices. The abstract combinatorial structure ensures that the realized simplices can be nicely glued together without overlaps. We can work through a simple example of the realization of a 2-simplex (triangle) and then the process of gluing two such simplices along their edges using face maps.
+    
+    a. **Example: Realization of a 2-simplex**:
+        A 2-simplex is essentially a triangle. Let's realize the 2-simplex \([2]\) in \( \mathbb{R}^2 \).
+
+        i. **Vertices**:
+            The set \([2]\) has three vertices: 0, 1, and 2. Assign these vertices coordinates in \( \mathbb{R}^2 \):
+            - Vertex 0: \( (0,0) \)
+            - Vertex 1: \( (1,0) \)
+            - Vertex 2: \( (0,1) \)
+            The 2-simplex (triangle) is then determined by the plane spanned by these three vertices.
+
+    b. **Face Maps and Gluing**:
+        Now, suppose we want to glue another 2-simplex along one of the edges of the previous triangle.
+
+        i. **Vertices of the second 2-simplex**:
+            Define the second triangle upside-down relative to the first:
+            - Vertex 0`: \( (0,0) \)
+            - Vertex 1': \( (1,0) \)
+            - Vertex 2': \( (0.5,-1) \)
+
+        ii. **Face Maps for Gluing**:
+             To glue the two triangles along an edge, we need to establish a face map that matches the vertices of one edge from the first triangle to an edge of the second                triangle.If we're gluing the edge determined by vertices 0 and 1 of the first triangle to the edge determined by vertices 0' and 1' of the second triangle, our                face maps would look like this:
+             - \(d_2: [2] \to [1]\) skipping the 2nd vertex, mapping both 0 and 1 to the edge opposite vertex 2.
+             - \(d_2': [2] \to [1]\) skipping the 2nd vertex of the second triangle, mapping both 0' and 1' to the edge opposite vertex 2'.
+             - With these face maps, the edge determined by 0 and 1 of the first triangle is identified with (or "glued to") the edge determined by 0' and 1' of the second                   triangle. Geometrically, the two triangles share this edge, forming an "hourglass" shape in \( \mathbb{R}^2 \).
+    c. **Result**:
+        The two 2-simplices are glued along one of their edges to form a new simplicial complex. This complex is topologically equivalent to a disc, but its geometric                  realization in \( \mathbb{R}^2 \) has a crease (at an angle) where the two triangles meet.
+
+\begin{center}
+\begin{tikzpicture}
+
+    % Drawing the coordinate system
+    \draw[->] (-2,0) -- (2.5,0) node[right] {$x$};
+    \draw[->] (0,-2) -- (0,2.5) node[above] {$y$};
+
+    % Drawing the glued triangles
+    \filldraw[fill=blue!20] (0,0) -- (1,0) -- (0,1) -- cycle;
+    \filldraw[fill=red!20] (0,0) -- (1,0) -- (0.5,-1) -- cycle;
+    
+    % Labeling vertices of the triangles
+    \node[anchor=north east] at (0,0) {0/0'};
+    \node[anchor=north west] at (1,0) {1/1'};
+    \node[anchor=south east] at (0,1) {2};
+    \node[anchor=north] at (0.5,-1) {2'};
+
+    % Description outside triangles
+    \node[text width=3cm,anchor=west] at (2.5,0.5) {The two 2-simplices are glued along their common edge};
+\end{tikzpicture}
+\end{center}
+
+\begin{definition}
+A simplicial set is a functor from $\Delta^{\text{op}}$ to \textbf{Sets}, the category of sets; that is, a contravariant functor from $\Delta$ to \textbf{Sets}.
+\end{definition}
+
+
+1. **Simplicial Category, \( \Delta \)**:
+   
+   \( \Delta \) is a category where the objects are ordered finite sets (like \([n] = \{1, 2, ..., n\}\)) and morphisms are non-strictly order-preserving maps. This category helps in defining the combinatorial structure of simplices.
+
+2. **Opposite Category, \( \Delta^{\text{op}} \)**:
+   
+   Given a category \( C \), its opposite category \( C^{\text{op}} \) has the same objects as \( C \), but the morphisms are "reversed." That is, if there is a morphism \( f: A \to B \) in \( C \), then in \( C^{\text{op}} \), there's a morphism \( f: B \to A \).
+
+3. **Functors**:
+   
+   A functor is a map between categories that sends objects of one category to objects of another and morphisms of the former to morphisms of the latter in a way that preserves the structure of the categories.
+
+4. **Contravariant Functors**:
+
+   While a functor typically sends morphisms in the direction they are presented, a contravariant functor "reverses" the direction of these morphisms. Specifically, if there is a morphism \( f: A \to B \) in the category \( C \), a contravariant functor maps it to a morphism \( f': B' \to A' \) in the category \( D \), where \( A' \) and \( B' \) are the images of \( A \) and \( B \) under the functor.
+
+5. **Simplicial Set Definition**:
+
+   A simplicial set is a (contravariant) functor from \( \Delta \) to **Sets**. What does this mean in practice?
+
+   - For each finite ordered set \([n]\) in \( \Delta \), a simplicial set assigns a set. This set can be thought of as the collection of \( n \)-simplices.
+   - For each morphism in \( \Delta \) (i.e., an order-preserving map between ordered sets), the functor provides a function between the corresponding sets in the category of sets. Because it's contravariant, the direction of the function is opposite to the morphism in \( \Delta \).
+   - The functor must satisfy certain properties to ensure it respects the structure of the categories involved.
+
+6. **Intuition**:
+
+   Think of a simplicial set as a generalized version of a simplicial complex, where instead of just having a collection of simplices that fit together in a nice way, you have a whole "family" of sets corresponding to different simplices and functions between them determined by the structure of the simplicial category \( \Delta \). This provides a very flexible and abstract framework to study topological and combinatorial properties.
+
+some transition text here
+
+1. **Simplicial Set Notation**:
+
+    Given a simplicial set \( X: \Delta^{\text{op}} \rightarrow \textbf{Sets} \), it's typical to denote the set \( X([n]) \) as \( X_n \). 
+   
+    - What this means: For each integer \( n \), the simplicial set \( X \) maps the finite ordered set \( [n] \) to a set \( X_n \). Each element of \( X_n \) is then thought of as an \( n \)-simplex of \( X \).
+
+2. **Standard Simplices, \( \Delta^n \)**:
+
+    The standard simplices, \( \Delta^n \), are defined as representable functors given by \( \text{hom}_\Delta(·, [n]) \).
+
+    - What this means: The standard \( n \)-simplex is a functor that associates to each finite ordered set in \( \Delta \) the set of all order-preserving maps from that set into \( [n] \).
+
+3. **Yoneda Lemma's Implication**:
+
+    The Yoneda lemma is a fundamental result in category theory that, in this context, implies a correspondence between the \( n \)-simplices of \( X \) and morphisms from \( \Delta^n \) to \( X \) within the category of simplicial sets.
+    
+    - What this means: For each \( n \)-simplex \( x \) in \( X_n \), there's a corresponding morphism (or function) \( x: \Delta^n \rightarrow X \). This correspondence is natural, meaning it arises systematically due to the structures involved.
+
+
+4. **Density Theorem and the Colimit Expression**:
+
+    The statement culminates in a mathematical expression involving a colimit (denoted by \( \text{colim} \)). The colimit is a categorical concept that generalizes the notion of a limit in calculus and unifying a variety of constructs seen in different mathematical contexts.
+
+    - **Definition of Colimit**:
+      
+      Given a functor \( F: \mathcal{J} \rightarrow \mathcal{C} \) from category \( \mathcal{J} \) to category \( \mathcal{C} \), a colimit of \( F \) consists of:
+      
+        1. An object \( L \) in \( \mathcal{C} \) and
+        2. A collection of morphisms \( \phi_j: F(j) \rightarrow L \) (for each object \( j \) in \( \mathcal{J} \))
+        
+      Such that for every morphism \( f: j \rightarrow j' \) in \( \mathcal{J} \), the following diagram commutes:
+
+      \[
+      \begin{array}{ccc}
+      F(j) & \stackrel{F(f)}{\longrightarrow} & F(j') \\
+      \downarrow{\phi_j} & & \downarrow{\phi_{j'}} \\
+      L & = & L \\
+      \end{array}
+      \]
+
+      Moreover, the object \( L \) with this property is universal in the sense that for any other object \( L' \) with maps \( \psi_j: F(j) \rightarrow L' \) making a similar diagram commute, there exists a unique morphism \( u: L \rightarrow L' \) such that for each \( j \), \( \psi_j = u \circ \phi_j \).
+
+    - **Simple Examples**:
+      
+        - **Disjoint Union (in the Category of Sets)**: 
+          Consider the category where objects are sets and morphisms are functions. For a family of sets \( \{ A_i \}_{i \in I} \), the colimit is the disjoint union of these sets. This is denoted as \( \bigsqcup_{i \in I} A_i \). Each set \( A_i \) is included in the disjoint union via the inclusion map, and any function from \( A_i \) to a set \( B \) which respects these inclusions can be extended uniquely to the entire disjoint union.
+
+        - **Pushout**:
+          Pushouts are examples of colimits. If you have two morphisms \( f: A \rightarrow B \) and \( g: A \rightarrow C \) in a category, the pushout is the "most general way" to complete the square by finding objects \( D \), \( p: B \rightarrow D \), and \( q: C \rightarrow D \) such that the diagrams commute. This concept is often encountered in algebraic contexts like group theory and ring theory, as well as in topology.
+
+    - **Relation to the Simplicial Context**:
+    
+      The expression \( \text{colim}_{x \in X_n} \Delta^n \approx X \) suggests that the simplicial set \( X \) can be "constructed" by appropriately "gluing together" or "assembling" standard simplices \( \Delta^n \). Each \( n \)-simplex in \( X \) provides some piece of the overall structure, and the colimit provides a unified framework for bringing all these pieces together.
+
+The colimit captures the essence of assembling or gluing together simpler structures to form a more complex one, preserving the relationships defined by the original structures. In the context of simplicial sets, this provides a rigorous foundation for intuitively appealing ideas about how these sets are built up from simplices.
+
+5. **Intuition**:
+
+    A simplicial set can be thought of as a collection of simplices of various dimensions that fit together in a specified manner. The passage indicates that this "fitting together" is expressed by the colimit, which assembles the individual simplices \( \Delta^n \) to produce the entire simplicial set \( X \). This understanding is deepened when considering the morphisms associated with each \( n \)-simplex; these morphisms provide the structure or "gluing instructions" for how the simplices come together.
+
+The passage outlines how the structure of a simplicial set relates to standard simplices and introduces some categorical concepts like representable functors, the Yoneda lemma, and colimits to illustrate the relationship.
+  
