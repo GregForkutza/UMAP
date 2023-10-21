@@ -228,41 +228,10 @@ A simplicial set is a functor from $\Delta^{\text{op}}$ to \textbf{Sets}, the ca
    - For each morphism in \( \Delta \) (i.e., an order-preserving map between ordered sets), the functor provides a function between the corresponding sets in the category of sets. Because it's contravariant, the direction of the function is opposite to the morphism in \( \Delta \).
    - The functor must satisfy certain properties to ensure it respects the structure of the categories involved.
 
-6. **Intuition**:
+5. **Intuition**:
 
    Think of a simplicial set as a generalized version of a simplicial complex, where instead of just having a collection of simplices that fit together in a nice way, you have a whole "family" of sets corresponding to different simplices and functions between them determined by the structure of the simplicial category \( \Delta \). This provides a very flexible and abstract framework to study topological and combinatorial properties.
 
-some transition text here
-
-1. **Simplicial Set Notation**:
-
-    Given a simplicial set \( X: \Delta^{\text{op}} \rightarrow \textbf{Sets} \), it's typical to denote the set \( X([n]) \) as \( X_n \). 
-   
-    - What this means: For each integer \( n \), the simplicial set \( X \) maps the finite ordered set \( [n] \) to a set \( X_n \). Each element of \( X_n \) is then thought of as an \( n \)-simplex of \( X \).
-
-2. **Standard Simplices, \( \Delta^n \)**:
-
-    The standard simplices, \( \Delta^n \), are defined as representable functors given by \( \text{hom}_\Delta(·, [n]) \).
-
-    - What this means: The standard \( n \)-simplex is a functor that associates to each finite ordered set in \( \Delta \) the set of all order-preserving maps from that set into \( [n] \).
-    
-    
-
-    a. **The Hom Bifunctor, \( \text{hom}_\Delta(·, ·) \)**:
-
-        The hom bifunctor, denoted \( \text{hom}_\Delta(·, ·) \), is a set-valued bifunctor defined on the product category \( \Delta \times \Delta \), mapping to the                 category **Sets** of sets. Specifically, for any two finite ordered sets \( [m] \) and \( [n] \) in \( \Delta \), \( \text{hom}_\Delta([m], [n]) \) designates the set         of all order-preserving maps from \( [m] \) to \( [n] \).
-   
-        - What this means: For any two integers \( m \) and \( n \), the hom bifunctor yields a set whose elements are functions. Each function in this set preserves the order           of elements when mapping from the set \( [m] \) to the set \( [n] \). If no such map exists between two given ordered sets, then the set is empty. 
-
-        - Fixing an argument: When one of the arguments is fixed, the bifunctor reduces to a functor. For example, by fixing the second argument as \( [n] \), we get a functor           \( \Delta \rightarrow \textbf{Sets} \) that sends each \( [m] \) to the set \( \text{hom}_\Delta([m], [n]) \) of order-preserving maps from \( [m] \) to \( [n] \).            Similarly, fixing the first argument produces a functor that maps each \( [n] \) to \( \text{hom}_\Delta([m], [n]) \).
-
-        - Functoriality: The bifunctorial nature of \( \text{hom}_\Delta(·, ·) \) ensures it respects the compositional structure of both categories \( \Delta \) (twice, once           for each factor) and **Sets**.
-
-3. **Yoneda Lemma's Implication**:
-
-    The Yoneda lemma is a fundamental result in category theory that, in this context, implies a correspondence between the \( n \)-simplices of \( X \) and morphisms from \( \Delta^n \) to \( X \) within the category of simplicial sets.
-    
-    - What this means: For each \( n \)-simplex \( x \) in \( X_n \), there's a corresponding morphism (or function) \( x: \Delta^n \rightarrow X \). This correspondence is natural, meaning it arises systematically due to the structures involved.
 
 \begin{proposition}
 Let \( X \) be a simplicial set. By the density theorem and with a minor abuse of notation, for every \( n \), we have
@@ -270,6 +239,36 @@ Let \( X \) be a simplicial set. By the density theorem and with a minor abuse o
 \text{colim}_{x \in X_n} \Delta^n \cong X.
 \]
 \end{proposition}
+
+1. **Simplicial Set Notation**:
+
+    Given a simplicial set \( X: \Delta^{\text{op}} \rightarrow \textbf{Sets} \), it's typical to denote the set \( X([n]) \) as \( X_n \). 
+   
+    - For each integer \( n \), the simplicial set \( X \) maps the finite ordered set \( [n] \) to a set \( X_n \). Each element of \( X_n \) is then thought of as an \( n \)-simplex of \( X \).
+
+2. **Standard Simplices, \( \Delta^n \)**:
+
+    The standard simplices, \( \Delta^n \), are defined as representable functors given by \( \text{hom}_\Delta(·, [n]) \).
+
+    - The standard \( n \)-simplex is a functor that associates to each finite ordered set in \( \Delta \) the set of all order-preserving maps from that set into \( [n] \).
+    
+    
+
+    a. **The Hom Bifunctor, \( \text{hom}_\Delta(·, ·) \)**:
+
+        The hom bifunctor, denoted \( \text{hom}_\Delta(·, ·) \), is a set-valued bifunctor defined on the product category \( \Delta \times \Delta \), mapping to the                 category **Sets** of sets. Specifically, for any two finite ordered sets \( [m] \) and \( [n] \) in \( \Delta \), \( \text{hom}_\Delta([m], [n]) \) designates the set         of all order-preserving maps from \( [m] \) to \( [n] \).
+   
+        - For any two integers \( m \) and \( n \), the hom bifunctor yields a set whose elements are functions. Each function in this set preserves the order           of              elements when mapping from the set \( [m] \) to the set \( [n] \). If no such map exists between two given ordered sets, then the set is empty. 
+
+        -  When one of the arguments is fixed, the bifunctor reduces to a functor. For example, by fixing the second argument as \( [n] \), we get a functor           \(                \Delta \rightarrow \textbf{Sets} \) that sends each \( [m] \) to the set \( \text{hom}_\Delta([m], [n]) \) of order-preserving maps from \( [m] \) to \( [n] \).               Similarly, fixing the first argument produces a functor that maps each \( [n] \) to \( \text{hom}_\Delta([m], [n]) \).
+
+        - The bifunctorial nature of \( \text{hom}_\Delta(·, ·) \) ensures it respects the compositional structure of both categories \( \Delta \) (twice, once           for            each factor) and **Sets**.
+
+3. **Yoneda Lemma's Implication**:
+
+    The Yoneda lemma is a fundamental result in category theory that, in this context, implies a correspondence between the \( n \)-simplices of \( X \) and morphisms from \( \Delta^n \) to \( X \) within the category of simplicial sets.
+    
+    - For each \( n \)-simplex \( x \) in \( X_n \), there's a corresponding morphism (or function) \( x: \Delta^n \rightarrow X \). This correspondence is natural, meaning it arises systematically due to the structures involved.
 
 
 4. **Density Theorem and the Colimit Expression**:
