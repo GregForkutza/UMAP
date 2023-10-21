@@ -180,7 +180,7 @@ Now we can use this abstraction to construct realizations of simplices:
              - \(d_2': [2] \to [1]\) skipping the 2nd vertex of the second triangle, mapping both 0' and 1' to the edge opposite vertex 2'.
              - With these face maps, the edge determined by 0 and 1 of the first triangle is identified with (or "glued to") the edge determined by 0' and 1' of the second                   triangle. Geometrically, the two triangles share this edge, forming an "hourglass" shape in \( \mathbb{R}^2 \).
     c. **Result**:
-        The two 2-simplices are glued along one of their edges to form a new simplicial complex. This complex is topologically equivalent to a disc, but its geometric                  realization in \( \mathbb{R}^2 \) has a crease (at an angle) where the two triangles meet.
+        The two 2-simplices are glued along one of their edges to form a new simplicial complex. This complex is topologically equivalent to a disc, but its geometric                  realization in \( \mathbb{R}^2 \) has a crease where the two triangles meet.
 
 \begin{center}
 \begin{tikzpicture}
@@ -208,24 +208,19 @@ Now we can use this abstraction to construct realizations of simplices:
 A simplicial set is a functor from $\Delta^{\text{op}}$ to \textbf{Sets}, the category of sets; that is, a contravariant functor from $\Delta$ to \textbf{Sets}.
 \end{definition}
 
-
-1. **Simplicial Category, \( \Delta \)**:
-   
-   \( \Delta \) is a category where the objects are ordered finite sets (like \([n] = \{1, 2, ..., n\}\)) and morphisms are non-strictly order-preserving maps. This category helps in defining the combinatorial structure of simplices.
-
-2. **Opposite Category, \( \Delta^{\text{op}} \)**:
+1. **Opposite Category, \( \Delta^{\text{op}} \)**:
    
    Given a category \( C \), its opposite category \( C^{\text{op}} \) has the same objects as \( C \), but the morphisms are "reversed." That is, if there is a morphism \( f: A \to B \) in \( C \), then in \( C^{\text{op}} \), there's a morphism \( f: B \to A \).
 
-3. **Functors**:
+2. **Functors**:
    
    A functor is a map between categories that sends objects of one category to objects of another and morphisms of the former to morphisms of the latter in a way that preserves the structure of the categories.
 
-4. **Contravariant Functors**:
+3. **Contravariant Functors**:
 
    While a functor typically sends morphisms in the direction they are presented, a contravariant functor "reverses" the direction of these morphisms. Specifically, if there is a morphism \( f: A \to B \) in the category \( C \), a contravariant functor maps it to a morphism \( f': B' \to A' \) in the category \( D \), where \( A' \) and \( B' \) are the images of \( A \) and \( B \) under the functor.
 
-5. **Simplicial Set Definition**:
+4. **Simplicial Set Definition**:
 
    A simplicial set is a (contravariant) functor from \( \Delta \) to **Sets**. What does this mean in practice?
 
@@ -250,12 +245,31 @@ some transition text here
     The standard simplices, \( \Delta^n \), are defined as representable functors given by \( \text{hom}_\Delta(·, [n]) \).
 
     - What this means: The standard \( n \)-simplex is a functor that associates to each finite ordered set in \( \Delta \) the set of all order-preserving maps from that set into \( [n] \).
+    
+    
+
+    a. **The Hom Bifunctor, \( \text{hom}_\Delta(·, ·) \)**:
+
+        The hom bifunctor, denoted \( \text{hom}_\Delta(·, ·) \), is a set-valued bifunctor defined on the product category \( \Delta \times \Delta \), mapping to the                 category **Sets** of sets. Specifically, for any two finite ordered sets \( [m] \) and \( [n] \) in \( \Delta \), \( \text{hom}_\Delta([m], [n]) \) designates the set         of all order-preserving maps from \( [m] \) to \( [n] \).
+   
+        - What this means: For any two integers \( m \) and \( n \), the hom bifunctor yields a set whose elements are functions. Each function in this set preserves the order           of elements when mapping from the set \( [m] \) to the set \( [n] \). If no such map exists between two given ordered sets, then the set is empty. 
+
+        - Fixing an argument: When one of the arguments is fixed, the bifunctor reduces to a functor. For example, by fixing the second argument as \( [n] \), we get a functor           \( \Delta \rightarrow \textbf{Sets} \) that sends each \( [m] \) to the set \( \text{hom}_\Delta([m], [n]) \) of order-preserving maps from \( [m] \) to \( [n] \).            Similarly, fixing the first argument produces a functor that maps each \( [n] \) to \( \text{hom}_\Delta([m], [n]) \).
+
+        - Functoriality: The bifunctorial nature of \( \text{hom}_\Delta(·, ·) \) ensures it respects the compositional structure of both categories \( \Delta \) (twice, once           for each factor) and **Sets**.
 
 3. **Yoneda Lemma's Implication**:
 
     The Yoneda lemma is a fundamental result in category theory that, in this context, implies a correspondence between the \( n \)-simplices of \( X \) and morphisms from \( \Delta^n \) to \( X \) within the category of simplicial sets.
     
     - What this means: For each \( n \)-simplex \( x \) in \( X_n \), there's a corresponding morphism (or function) \( x: \Delta^n \rightarrow X \). This correspondence is natural, meaning it arises systematically due to the structures involved.
+
+\begin{proposition}
+Let \( X \) be a simplicial set. By the density theorem and with a minor abuse of notation, for every \( n \), we have
+\[
+\text{colim}_{x \in X_n} \Delta^n \cong X.
+\]
+\end{proposition}
 
 
 4. **Density Theorem and the Colimit Expression**:
@@ -281,23 +295,60 @@ some transition text here
 
       Moreover, the object \( L \) with this property is universal in the sense that for any other object \( L' \) with maps \( \psi_j: F(j) \rightarrow L' \) making a similar diagram commute, there exists a unique morphism \( u: L \rightarrow L' \) such that for each \( j \), \( \psi_j = u \circ \phi_j \).
 
-    - **Simple Examples**:
-      
-        - **Disjoint Union (in the Category of Sets)**: 
-          Consider the category where objects are sets and morphisms are functions. For a family of sets \( \{ A_i \}_{i \in I} \), the colimit is the disjoint union of these sets. This is denoted as \( \bigsqcup_{i \in I} A_i \). Each set \( A_i \) is included in the disjoint union via the inclusion map, and any function from \( A_i \) to a set \( B \) which respects these inclusions can be extended uniquely to the entire disjoint union.
 
-        - **Pushout**:
-          Pushouts are examples of colimits. If you have two morphisms \( f: A \rightarrow B \) and \( g: A \rightarrow C \) in a category, the pushout is the "most general way" to complete the square by finding objects \( D \), \( p: B \rightarrow D \), and \( q: C \rightarrow D \) such that the diagrams commute. This concept is often encountered in algebraic contexts like group theory and ring theory, as well as in topology.
+- **Simple Examples**:
 
+    - **Disjoint Union (in the Category of Sets)**: 
+        Given a family of sets \( \{ A_i \}_{i \in I} \), consider the functor \( F: I \rightarrow \textbf{Sets} \) such that \( F(i) = A_i \) for each \( i \in I \). The             colimit of this functor is:
+
+        1. An object \( L \) in **Sets**, which is the disjoint union \( \bigsqcup_{i \in I} A_i \).
+
+        2. A collection of morphisms \( \phi_i: A_i \rightarrow \bigsqcup_{i \in I} A_i \) which are the inclusion maps of each \( A_i \) into the disjoint union.
+
+        Now, if there's any set \( B \) and a collection of functions \( \psi_i: A_i \rightarrow B \) that respect these inclusions (meaning that if two elements are distinct         in the disjoint union, they remain distinct after applying the function), then there exists a unique function \( u: \bigsqcup_{i \in I} A_i \rightarrow B \) such that         \( \psi_i \) is the composition of \( u \) and \( \phi_i \) for each \( i \).
+
+
+    - **Pushout**:
+
+        Given two morphisms \( f: A \rightarrow B \) and \( g: A \rightarrow C \) in a category \( \mathcal{C} \):
+    
+        1. Consider the category \( \mathcal{J} \) with objects \( \{1, 2, 3\} \) and morphisms given by \( \text{id}_1, \text{id}_2, \text{id}_3, 1 \rightarrow 2, 1                  \rightarrow 3        \). The functor \( F: \mathcal{J} \rightarrow \mathcal{C} \) sends object 1 to \( A \), object 2 to \( B \), and object 3 to \( C \). It sends the         morphism \( 1               \rightarrow 2 \) to \( f \) and \( 1 \rightarrow 3 \) to \( g \).
+    
+        2. The colimit object \( L \) is the pushout \( D \), and the morphisms are \( p: B \rightarrow D \) and \( q: C \rightarrow D \).
+    
+           Using the language of the definition:
+        
+           Given the functor \( F \), the colimit consists of:
+        
+           - An object \( D \) in \( \mathcal{C} \) (the pushout of \( f \) and \( g \)).
+    
+           - A collection of morphisms, namely \( p: B \rightarrow D \) and \( q: C \rightarrow D \), that make the square commute for the morphisms \( f \) and \( g \). 
+    
+            The uniqueness and universality of \( D \) ensure that it is the "most general way" to complete the square given \( f \) and \( g \).
+    
     - **Relation to the Simplicial Context**:
     
-      The expression \( \text{colim}_{x \in X_n} \Delta^n \approx X \) suggests that the simplicial set \( X \) can be "constructed" by appropriately "gluing together" or "assembling" standard simplices \( \Delta^n \). Each \( n \)-simplex in \( X \) provides some piece of the overall structure, and the colimit provides a unified framework for bringing all these pieces together.
+        Given a simplicial set \( X \):
+          
+        1. The functor \( F: \Delta^{\text{op}} \rightarrow \textbf{Sets} \) maps each \( [n] \) to \( X_n \), which represents the set of \( n \)-simplices in \( X \).
+          
+        2. The colimit object \( L \) here is the simplicial set \( X \) itself, and the morphisms are the face and degeneracy maps that come from the simplicial                         structure.
+          
+        Using the language of the definition:
+          
+        Given the functor \( F \), the colimit consists of:
+          
+        - The object \( X \) in the category of simplicial sets.
+          
+        - A collection of morphisms that take each \( n \)-simplex in \( X_n \) (for each \( n \)) to the corresponding \( n \)-simplex in \( X \) via the simplicial                    structure of     \( X \). 
+      
+        The expression \( \text{colim}_{x \in X_n} \Delta^n \approx X \) signifies that the simplicial set \( X \) can be thought of as the result of coherently "gluing               together"     or "assembling" the standard simplices \( \Delta^n \) according to their simplicial structure. This colimit offers a systematic way to combine the \(            n\)-simplices of \(X \) into a unified whole.
 
-The colimit captures the essence of assembling or gluing together simpler structures to form a more complex one, preserving the relationships defined by the original structures. In the context of simplicial sets, this provides a rigorous foundation for intuitively appealing ideas about how these sets are built up from simplices.
+
 
 5. **Intuition**:
 
-    A simplicial set can be thought of as a collection of simplices of various dimensions that fit together in a specified manner. The passage indicates that this "fitting together" is expressed by the colimit, which assembles the individual simplices \( \Delta^n \) to produce the entire simplicial set \( X \). This understanding is deepened when considering the morphisms associated with each \( n \)-simplex; these morphisms provide the structure or "gluing instructions" for how the simplices come together.
+    The colimit captures the essence of assembling or gluing together simpler structures to form a more complex one, preserving the relationships defined by the original structures. In the context of simplicial sets, this provides a rigorous foundation for about how these sets are built up from simplices. A simplicial set can be thought of as a collection of simplices of various dimensions that fit together in a specified manner. This "fitting together" is expressed by the colimit, which assembles the individual simplices \( \Delta^n \) to produce the entire simplicial set \( X \) anmd the morphisms associated with each \( n \)-simplex; these morphisms provide the structure or "gluing instructions" for how the simplices come together.
 
-The passage outlines how the structure of a simplicial set relates to standard simplices and introduces some categorical concepts like representable functors, the Yoneda lemma, and colimits to illustrate the relationship.
+
   
