@@ -520,3 +520,5 @@ Given the definition of a sieve, in the context of a Grothendieck topology, we c
 A \emph{presheaf} \( P \) on \( I \) is a functor from \( I^{\text{op}} \) to \textbf{Sets}. A \emph{fuzzy set} is a presheaf on \( I \) such that all maps \( P(a \leq b) \) are injections.
 \end{definition}
 
+
+
